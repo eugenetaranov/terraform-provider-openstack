@@ -345,6 +345,27 @@ func (jt *JSONRFC3339NoZ) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// RFC3339Z is the time format used in Rackspace
+const RFC3339Z = "2006-01-02T15:04:05Z"
+
+type JSONRFC3339Z time.Time
+
+func (jt *JSONRFC3339Z) UnmarshalJSON(data []byte) error {
+        var s string
+        if err := json.Unmarshal(data, &s); err != nil {
+                return err
+        }
+        if s == "" {
+                return nil
+        }
+        t, err := time.Parse(RFC3339Z, s)
+        if err != nil {
+                return err
+        }
+        *jt = JSONRFC3339Z(t)
+        return nil
+}
+
 /*
 Link is an internal type to be used in packages of collection resources that are
 paginated in a certain way.
